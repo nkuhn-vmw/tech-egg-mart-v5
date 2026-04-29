@@ -1,0 +1,12 @@
+applications:
+- name: tech-egg-mart-v5
+  memory: 1G
+  disk_quota: 512M
+  instances: 1
+  buildpacks:
+    - java_buildpack_offline
+  path: build/libs/tech-egg-mart-v5-0.0.1-SNAPSHOT.jar
+  env:
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 21.+ } }'
+  routes:
+    - route: tech-egg-mart-v5.apps.tas-ndc.kuhn-labs.com
