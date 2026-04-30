@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Your Cart</h2>
+    <div th:if="${#lists.isEmpty(items)}">
+        <p>Your cart is empty.</p>
+        <a th:href="@{/products}" class="btn btn-primary">Continue Shopping</a>
+    </div>
+    <div th:unless="${#lists.isEmpty(items)}">
+        <table class="table table-bordered">
+            <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.product.name}"></td>
+                <td th:text="${item.product.price}"></td>
+                <td>
+                    <form th:action="@{/cart/update}" method="post" class="d-inline">
+                        <input type="hidden" name="productId" th:value="${item.product.id}" />
+                        <input type="number" name="quantity" min="1" th:value="${item.quantity}" class="form-control d-inline w-50" />
+                        <button type="submit" class="btn btn-sm btn-primary ms-2">Update</button>
+                    </form>
+                </td>
+                <td th:text="${#numbers.formatDecimal(item.totalPrice, 2, 'POINT', ',', 'USD')}"></td>
+                <td>
+                    <form th:action="@{/cart/remove}" method="post" class="d-inline">
+                        <input type="hidden" name="productId" th:value="${item.product.id}" />
+                        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <h4>Total Amount: <span th:text="${#numbers.formatDecimal(totalAmount, 2, 'POINT', ',', 'USD')}"></span></h4>
+        <form th:action="@{/cart/checkout}" method="post">
+            <button type="submit" class="btn btn-success">Proceed to Checkout</button>
+        </form>
+        <a th:href="@{/products}" class="btn btn-secondary ms-2">Continue Shopping</a>
+    </div>
+</div>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
