@@ -27,6 +27,18 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> findFiltered(Long categoryId, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice) {
+        if (categoryId != null && minPrice != null && maxPrice != null) {
+            return productRepository.findByCategoryIdAndPriceBetween(categoryId, minPrice, maxPrice);
+        } else if (categoryId != null) {
+            return productRepository.findByCategoryId(categoryId);
+        } else if (minPrice != null && maxPrice != null) {
+            return productRepository.findByPriceBetween(minPrice, maxPrice);
+        } else {
+            return productRepository.findAll();
+        }
+    }
+
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
