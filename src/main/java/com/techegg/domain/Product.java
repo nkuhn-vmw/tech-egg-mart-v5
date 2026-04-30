@@ -61,9 +61,9 @@ public class Product {
     // Constructors
     public Product() {}
 
-    public Product(String name, String description, BigDecimal price, String imageUrl, Category category) {
+    public Product(String name, String shortDescription, BigDecimal price, String imageUrl, Category category) {
         this.name = name;
-        this.description = description;
+        this.shortDescription = shortDescription;
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -86,13 +86,6 @@ public class Product {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public BigDecimal getPrice() {
         return price;
@@ -151,8 +144,7 @@ public class Product {
     public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-        this.reviews = reviews;
-    }
+
 
     public void addReview(Review review) {
         reviews.add(review);
