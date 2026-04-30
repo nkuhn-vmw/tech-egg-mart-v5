@@ -9,9 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
+import java.time.Instant;
+import com.techegg.domain.Review;
+import java.math.BigDecimal;
 
 @Controller
 public class ProductController {
@@ -40,4 +44,29 @@ public class ProductController {
         model.addAttribute("maxPrice", maxPrice);
         return "product-list";
     }
-}
+
+    @GetMapping("/products/{id}")
+    public String productDetail(@PathVariable("id") Long id, Model model) {
+        Product product = productService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        List<Review> reviews = productService.getReviewsForProduct(id);
+        model.addAttribute("product", product);
+        model.addAttribute("reviews", reviews);
+        return "product-detail";
+    }
+
+    @PostMapping("/products/{id}/reviews")
+    public String addReview(@PathVariable("id") Long productId,
+                            @RequestParam("reviewerName") String reviewerName,
+                            @RequestParam("rating") Integer rating,
+                            @RequestParam("comment") String comment,
+                            RedirectAttributes redirectAttributes) {
+        Review review = new Review();
+        review.setReviewerName(reviewerName);
+        review.setRating(rating);
+        review.setComment(comment);
+        review.setDate(Instant.now());
+        productService.addReview(productId, review);
+        redirectAttributes.addFlashAttribute("message", "Review added successfully");
+        return "redirect:/products/" + productId;
+    }}
