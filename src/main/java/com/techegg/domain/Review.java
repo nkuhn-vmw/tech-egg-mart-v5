@@ -14,9 +14,14 @@ public class Review {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @jakarta.validation.constraints.NotBlank
     private String reviewerName;
+    @jakarta.validation.constraints.NotNull
+    @jakarta.validation.constraints.Min(1)
+    @jakarta.validation.constraints.Max(5)
     private Integer rating; // 1-5
     @Lob
+    @jakarta.validation.constraints.NotBlank
     private String comment;
     private Instant date;
 
