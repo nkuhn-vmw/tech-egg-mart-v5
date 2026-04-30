@@ -2,20 +2,24 @@ package com.techegg.controller;
 
 import com.techegg.domain.Product;
 import com.techegg.domain.Category;
-import com.techegg.service.ProductService;
+import com.techegg.domain.Review;
 import com.techegg.service.CategoryService;
+import com.techegg.service.ProductService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.List;
-import java.time.Instant;
-import com.techegg.domain.Review;
+
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 
 @Controller
 public class ProductController {
@@ -57,10 +61,16 @@ public class ProductController {
 
     @PostMapping("/products/{id}/reviews")
     public String addReview(@PathVariable("id") Long productId,
-                            @RequestParam("reviewerName") String reviewerName,
-                            @RequestParam("rating") Integer rating,
-                            @RequestParam("comment") String comment,
+                            @RequestParam("reviewerName") @NotBlank String reviewerName,
+                            @RequestParam("rating") @NotNull @Min(1) @Max(5) Integer rating,
+                            @RequestParam("comment") @NotBlank String comment,
+                            BindingResult result,
                             RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Please fill all required fields correctly");
+            return "redirect:/products/" + productId;
+        }
+        
         Review review = new Review();
         review.setReviewerName(reviewerName);
         review.setRating(rating);
@@ -69,4 +79,5 @@ public class ProductController {
         productService.addReview(productId, review);
         redirectAttributes.addFlashAttribute("message", "Review added successfully");
         return "redirect:/products/" + productId;
-    }}
+    }
+}

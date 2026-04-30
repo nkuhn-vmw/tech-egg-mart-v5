@@ -1,11 +1,29 @@
 package com.techegg.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.Instant;
 
 @Entity
 @Table(name = "reviews")
 public class Review {
+
+    // Validation constraints
+    @NotBlank
+    private String reviewerName;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private Integer rating; // 1-5
+
+    @NotBlank
+    @Lob
+    private String comment;
+
+    @NotNull
+    private Instant date;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,11 +32,7 @@ public class Review {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    private String reviewerName;
-    private Integer rating; // 1-5
-    @Lob
-    private String comment;
-    private Instant date;
+
 
     // Getters and setters
     public Long getId() { return id; }
