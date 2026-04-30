@@ -16,6 +16,8 @@ import java.util.List;
 import java.time.Instant;
 import com.techegg.domain.Review;
 import java.math.BigDecimal;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 @Controller
 public class ProductController {
@@ -57,16 +59,17 @@ public class ProductController {
 
     @PostMapping("/products/{id}/reviews")
     public String addReview(@PathVariable("id") Long productId,
-                            @RequestParam("reviewerName") String reviewerName,
-                            @RequestParam("rating") Integer rating,
-                            @RequestParam("comment") String comment,
+                            @Valid Review review,
+                            BindingResult result,
                             RedirectAttributes redirectAttributes) {
-        Review review = new Review();
-        review.setReviewerName(reviewerName);
-        review.setRating(rating);
-        review.setComment(comment);
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Invalid review input");
+            return "redirect:/products/" + productId;
+        }
         review.setDate(Instant.now());
         productService.addReview(productId, review);
         redirectAttributes.addFlashAttribute("message", "Review added successfully");
         return "redirect:/products/" + productId;
-    }}
+    }
+}
+

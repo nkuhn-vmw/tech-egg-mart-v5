@@ -11,7 +11,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @jakarta.validation.constraints.NotBlank
     private String name;
+    @jakarta.validation.constraints.NotBlank
     private String slug;
     private String iconClass;
     private Integer displayOrder;

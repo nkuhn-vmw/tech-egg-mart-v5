@@ -37,8 +37,7 @@ public class CategoryController {
             Model model) {
         Category category = categoryService.findBySlug(slug);
         if (category == null) {
-            // If not found, fallback to all products view
-            return "redirect:/products";
+            throw new com.techegg.exception.ResourceNotFoundException("Category not found");
         }
         // Retrieve products filtered by category and optional price range
         List<Product> products = productService.findFiltered(category.getId(), minPrice, maxPrice);

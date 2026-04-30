@@ -58,7 +58,7 @@ public class ProductService {
     @Transactional
     public Review addReview(Long productId, Review review) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new com.techegg.exception.ResourceNotFoundException("Product not found"));
         review.setProduct(product);
         Review saved = reviewRepository.save(review);
         // Update product aggregate rating and review count (simple implementation)

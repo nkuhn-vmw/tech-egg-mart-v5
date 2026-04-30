@@ -14,15 +14,21 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @jakarta.validation.constraints.NotBlank
     private String sku;
+    @jakarta.validation.constraints.NotBlank
     private String name;
     private String brand;
     @Column(length = 200)
     private String shortDescription;
     @Lob
     private String longDescription;
+    @jakarta.validation.constraints.NotNull
+    @jakarta.validation.constraints.DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
+    @jakarta.validation.constraints.DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal originalPrice;
+    @jakarta.validation.constraints.NotBlank
     private String imageUrl;
     @Lob
     private String thumbnailUrls; // JSON array as String
