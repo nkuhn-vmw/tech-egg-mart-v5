@@ -59,13 +59,21 @@ public class ProductController {
 
     @PostMapping("/products/{id}/reviews")
     public String addReview(@PathVariable("id") Long productId,
-                            @Valid Review review,
+                            @Valid com.techegg.dto.ReviewRequest reviewRequest,
                             BindingResult result,
                             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Invalid review input");
+            // Collect validation error messages
+            StringBuilder sb = new StringBuilder();
+            result.getAllErrors().forEach(error -> sb.append(error.getDefaultMessage()).append(" "));
+            redirectAttributes.addFlashAttribute("error", sb.toString().trim());
             return "redirect:/products/" + productId;
         }
+        // Map DTO to entity
+        com.techegg.domain.Review review = new com.techegg.domain.Review();
+        review.setReviewerName(reviewRequest.getReviewerName());
+        review.setRating(reviewRequest.getRating());
+        review.setComment(reviewRequest.getComment());
         review.setDate(Instant.now());
         productService.addReview(productId, review);
         redirectAttributes.addFlashAttribute("message", "Review added successfully");
