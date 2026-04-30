@@ -13,6 +13,9 @@ public class Category {
 
     @jakarta.validation.constraints.NotBlank
     private String name;
+
+    @jakarta.validation.constraints.NotBlank
+    private String description;
     @jakarta.validation.constraints.NotBlank
     private String slug;
     private String iconClass;
@@ -24,6 +27,9 @@ public class Category {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> children;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 
     private Instant createdAt;
 
@@ -44,4 +50,11 @@ public class Category {
     public void setChildren(List<Category> children) { this.children = children; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
 }
+
