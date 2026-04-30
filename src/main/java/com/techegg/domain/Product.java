@@ -17,10 +17,8 @@ public class Product {
     private String sku;
     private String name;
     private String brand;
-    @Column(length = 200)
-    private String shortDescription;
     @Lob
-    private String longDescription;
+    private String description;
     private BigDecimal price;
     private BigDecimal originalPrice;
     private String imageUrl;
@@ -50,10 +48,8 @@ public class Product {
     public void setName(String name) { this.name = name; }
     public String getBrand() { return brand; }
     public void setBrand(String brand) { this.brand = brand; }
-    public String getShortDescription() { return shortDescription; }
-    public void setShortDescription(String shortDescription) { this.shortDescription = shortDescription; }
-    public String getLongDescription() { return longDescription; }
-    public void setLongDescription(String longDescription) { this.longDescription = longDescription; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
     public BigDecimal getOriginalPrice() { return originalPrice; }
