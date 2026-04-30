@@ -25,6 +25,10 @@ public class Review {
     private String comment;
     private Instant date;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private com.techegg.domain.User user;
+
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -38,4 +42,7 @@ public class Review {
     public void setComment(String comment) { this.comment = comment; }
     public Instant getDate() { return date; }
     public void setDate(Instant date) { this.date = date; }
+
+    public com.techegg.domain.User getUser() { return user; }
+    public void setUser(com.techegg.domain.User user) { this.user = user; }
 }
