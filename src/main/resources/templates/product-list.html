@@ -26,6 +26,7 @@
     </style>
 </head>
 <body>
+    <header th:replace="fragments/header :: header"></header>
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar Filters -->
@@ -66,7 +67,12 @@
                         </div>
                         <div class="mt-auto">
                             <p class="fw-bold" th:text="${#numbers.formatDecimal(product.price, 2, 'COMMA', '.', 'USD')}"></p>
-                            <a th:href="@{'/products/' + ${product.id}}" class="btn btn-sm btn-outline-secondary w-100">View Details</a>
+                            <a th:href="@{'/products/' + ${product.id}}" class="btn btn-sm btn-outline-secondary w-45 me-2">View Details</a>
+                        <form th:action="@{/cart/add}" method="post" class="d-inline">
+                            <input type="hidden" name="productId" th:value="${product.id}" />
+                            <input type="number" name="quantity" min="1" value="1" class="form-control d-inline w-25 me-2" style="display:inline-block;" />
+                            <button type="submit" class="btn btn-sm btn-primary w-45">Add to Cart</button>
+                        </form>
                         </div>
                     </div>
                 </div>
