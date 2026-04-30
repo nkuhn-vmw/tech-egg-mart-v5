@@ -7,6 +7,9 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class Category {
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private java.util.List<Product> products;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,4 +47,7 @@ public class Category {
     public void setChildren(List<Category> children) { this.children = children; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    
+    public java.util.List<Product> getProducts() { return products; }
+    public void setProducts(java.util.List<Product> products) { this.products = products; }
 }
