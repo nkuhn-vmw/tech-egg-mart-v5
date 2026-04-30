@@ -8,11 +8,6 @@ import java.util.List;
 @Table(name = "categories")
 public class Category {
 
-    @jakarta.validation.constraints.NotBlank
-    private String description;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private java.util.List<Product> products;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +17,7 @@ public class Category {
 
     @jakarta.validation.constraints.NotBlank
     private String description;
+
     @jakarta.validation.constraints.NotBlank
     private String slug;
     private String iconClass;
@@ -41,13 +37,11 @@ public class Category {
 
     // Getters and setters
     public Long getId() { return id; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public java.util.List<Product> getProducts() { return products; }
-    public void setProducts(java.util.List<Product> products) { this.products = products; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
     public String getSlug() { return slug; }
     public void setSlug(String slug) { this.slug = slug; }
     public String getIconClass() { return iconClass; }
@@ -58,13 +52,9 @@ public class Category {
     public void setParent(Category parent) { this.parent = parent; }
     public List<Category> getChildren() { return children; }
     public void setChildren(List<Category> children) { this.children = children; }
-    public Instant getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
     public List<Product> getProducts() { return products; }
     public void setProducts(List<Product> products) { this.products = products; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }
 
