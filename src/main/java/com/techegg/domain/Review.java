@@ -27,7 +27,7 @@ public class Review {
     private Long id;
 
     @NotBlank
-    private String reviewerName;
+    private String authorName;
 
     @NotNull
     @Min(1)
@@ -46,8 +46,8 @@ public class Review {
 
     public Review() {}
 
-    public Review(String reviewerName, Integer rating, String comment, Product product) {
-        this.reviewerName = reviewerName;
+    public Review(String authorName, Integer rating, String comment, Product product) {
+        this.authorName = authorName;
         this.rating = rating;
         this.comment = comment;
         this.product = product;
@@ -55,8 +55,8 @@ public class Review {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getReviewerName() { return reviewerName; }
-    public void setReviewerName(String reviewerName) { this.reviewerName = reviewerName; }
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
     public Integer getRating() { return rating; }
     public void setRating(Integer rating) { this.rating = rating; }
     public String getComment() { return comment; }
