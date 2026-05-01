@@ -48,6 +48,12 @@ public class Product {
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
 
+    @Column(name = "average_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
+
+    @Column(name = "review_count")
+    private Integer reviewCount;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

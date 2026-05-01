@@ -1,10 +1,13 @@
 package com.techegg.service;
 
 import com.techegg.domain.Product;
+import com.techegg.domain.Review;
 import com.techegg.repository.ProductRepository;
+import com.techegg.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,9 +15,11 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ReviewRepository reviewRepository) {
         this.productRepository = productRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     /**
@@ -69,5 +74,36 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    /**
+     * Add a review to a product and recalculate average rating.
+     */
+    @Transactional
+    public Review addReview(Long productId, Review review) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        // Associate review with product
+        review.setProduct(product);
+        Review saved = reviewRepository.save(review);
+        // Recalculate average rating
+        recalculateRating(product);
+        return saved;
+    }
+
+    /**
+     * Recalculate the average rating for a product based on its reviews.
+     */
+    private void recalculateRating(Product product) {
+        List<Review> reviews = product.getReviews();
+        if (reviews == null || reviews.isEmpty()) {
+            product.setAverageRating(null);
+            product.setReviewCount(0);
+        } else {
+            double avg = reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+            product.setAverageRating(BigDecimal.valueOf(avg).setScale(2, BigDecimal.ROUND_HALF_UP));
+            product.setReviewCount(reviews.size());
+        }
+        productRepository.save(product);
     }
 }
