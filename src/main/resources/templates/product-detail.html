@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${product.name}">Product Detail</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-5">
+            <img th:src="${product.imageUrl}" class="img-fluid" alt="Product Image" />
+        </div>
+        <div class="col-md-7">
+            <h2 th:text="${product.name}">Product Name</h2>
+            <p><strong>Brand:</strong> <span th:text="${product.brand}">Brand</span></p>
+            <p><strong>Model:</strong> <span th:text="${product.model}">Model</span></p>
+            <p><strong>Description:</strong></p>
+            <p th:text="${product.description}">Description</p>
+            <p><strong>Price:</strong> $<span th:text="${product.price}">0.00</span></p>
+            <p><strong>Inventory:</strong> <span th:text="${product.inventory}">0</span> units</p>
+        </div>
+    </div>
+
+    <hr/>
+    <h3>Reviews</h3>
+    <div th:if="${#lists.isEmpty(reviews)}">
+        <p>No reviews yet. Be the first to review this product!</p>
+    </div>
+    <div th:unless="${#lists.isEmpty(reviews)}">
+        <div th:each="review : ${reviews}" class="mb-3 border p-3">
+            <p><strong th:text="${review.reviewerName}">Reviewer</strong> - Rating: <span th:text="${review.rating}">5</span>/5</p>
+            <p th:text="${review.comment}">Comment</p>
+            <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">Date</small>
+        </div>
+    </div>
+
+    <hr/>
+    <h4>Add a Review</h4>
+    <form th:action="@{'/reviews'}" method="post" th:object="${newReview}">
+        <input type="hidden" th:name="productId" th:value="${product.id}" />
+        <div class="mb-3">
+            <label for="reviewerName" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="reviewerName" th:field="*{reviewerName}" required />
+        </div>
+        <div class="mb-3">
+            <label for="rating" class="form-label">Rating (1-5)</label>
+            <select class="form-select" id="rating" th:field="*{rating}" required>
+                <option th:each="i : ${#numbers.sequence(1,5)}" th:value="${i}" th:text="${i}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="comment" class="form-label">Comment</label>
+            <textarea class="form-control" id="comment" rows="3" th:field="*{comment}" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+</div>
+
+<script src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
