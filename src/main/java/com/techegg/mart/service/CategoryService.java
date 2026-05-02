@@ -27,7 +27,33 @@ public class CategoryService {
 
     @Transactional
     public Category createCategory(Category category) {
+        // Basic creation, validation can be added as needed
         return categoryRepository.save(category);
+    }
+
+    // New method to handle DTO request
+    public Category createCategoryFromRequest(com.techegg.mart.dto.CategoryRequest request) {
+        Category parent = null;
+        if (request.getParentCategoryId() != null) {
+            parent = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
+        }
+        Category category = new Category(request.getName(), request.getDescription(), parent);
+        return categoryRepository.save(category);
+    }
+
+    // New method to handle update from DTO
+    public Optional<Category> updateCategoryFromRequest(Long id, com.techegg.mart.dto.CategoryRequest request) {
+        return categoryRepository.findById(id).map(category -> {
+            category.setName(request.getName());
+            category.setDescription(request.getDescription());
+            if (request.getParentCategoryId() != null) {
+                Category parent = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
+                category.setParentCategory(parent);
+            } else {
+                category.setParentCategory(null);
+            }
+            return categoryRepository.save(category);
+        });
     }
 
     @Transactional
