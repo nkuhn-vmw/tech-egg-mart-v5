@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: tech-egg-mart-v5
+  datasource:
+    url: jdbc:h2:mem:teg
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+server:
+  port: ${PORT:8080}
