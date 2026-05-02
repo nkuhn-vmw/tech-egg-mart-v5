@@ -1,12 +1,15 @@
 package com.techegg.mart.service;
 
+import com.techegg.mart.dto.ProductRequest;
+import com.techegg.mart.dto.ProductResponse;
 import com.techegg.mart.entity.Product;
+import com.techegg.mart.exception.ResourceNotFoundException;
 import com.techegg.mart.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -17,42 +20,85 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    // Convert entity to response DTO
+    private ProductResponse toResponse(Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getImageUrl(),
+                product.getCategoryId(),
+                product.getBrand(),
+                product.getModel(),
+                product.getSpecifications(),
+                product.getStockQuantity(),
+                product.getRating()
+        );
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    // Convert request DTO to entity (for create)
+    private Product fromRequest(ProductRequest request) {
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setImageUrl(request.getImageUrl());
+        product.setCategoryId(request.getCategoryId());
+        product.setBrand(request.getBrand());
+        product.setModel(request.getModel());
+        product.setSpecifications(request.getSpecifications());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setRating(request.getRating());
+        return product;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ProductResponse getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id));
+        return toResponse(product);
     }
 
     @Transactional
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
+    public ProductResponse createProduct(ProductRequest request) {
+        Product product = fromRequest(request);
+        Product saved = productRepository.save(product);
+        return toResponse(saved);
     }
 
     @Transactional
-    public Optional<Product> updateProduct(Long id, Product productDetails) {
-        return productRepository.findById(id).map(product -> {
-            product.setName(productDetails.getName());
-            product.setDescription(productDetails.getDescription());
-            product.setPrice(productDetails.getPrice());
-            product.setImageUrl(productDetails.getImageUrl());
-            product.setCategoryId(productDetails.getCategoryId());
-            product.setBrand(productDetails.getBrand());
-            product.setModel(productDetails.getModel());
-            product.setSpecifications(productDetails.getSpecifications());
-            product.setStockQuantity(productDetails.getStockQuantity());
-            product.setRating(productDetails.getRating());
-            return productRepository.save(product);
-        });
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id));
+        // Update fields
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setImageUrl(request.getImageUrl());
+        product.setCategoryId(request.getCategoryId());
+        product.setBrand(request.getBrand());
+        product.setModel(request.getModel());
+        product.setSpecifications(request.getSpecifications());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setRating(request.getRating());
+        Product updated = productRepository.save(product);
+        return toResponse(updated);
     }
 
     @Transactional
-    public boolean deleteProduct(Long id) {
+    public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("Product not found with id " + id);
         }
         productRepository.deleteById(id);
-        return true;
     }
 }
