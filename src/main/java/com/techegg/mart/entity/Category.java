@@ -1,6 +1,8 @@
 package com.techegg.mart.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
@@ -10,7 +12,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name")
+    @NotBlank(message = "Category name is required")
+    @Size(max = 100, message = "Category name must be less than 100 characters")
+    @Column(name = "name", nullable = false)
     private String name;
     
     @Size(max = 500, message = "Category description must be less than 500 characters")
