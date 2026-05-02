@@ -1,77 +1,71 @@
 package com.techegg.mart.service;
 
-import com.techegg.mart.entity.Category;
+import com.techegg.mart.dto.CategoryRequest;
+import com.techegg.mart.dto.CategoryResponse;
+import com.techegg.mart.exception.ResourceNotFoundException;
+import com.techegg.mart.model.Category;
 import com.techegg.mart.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public CategoryResponse getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+        return convertToResponse(category);
     }
 
-    public Optional<Category> getCategoryById(Long id) {
-        return categoryRepository.findById(id);
+    public CategoryResponse createCategory(CategoryRequest request) {
+        Category category = convertToEntity(request);
+        Category savedCategory = categoryRepository.save(category);
+        return convertToResponse(savedCategory);
     }
 
-    @Transactional
-    public Category createCategory(Category category) {
-        // Basic creation, validation can be added as needed
-        return categoryRepository.save(category);
+    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+        
+        existingCategory.setName(request.getName());
+        existingCategory.setDescription(request.getDescription());
+        
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        return convertToResponse(updatedCategory);
     }
 
-    // New method to handle DTO request
-    public Category createCategoryFromRequest(com.techegg.mart.dto.CategoryRequest request) {
-        Category parent = null;
-        if (request.getParentCategoryId() != null) {
-            parent = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
-        }
-        Category category = new Category(request.getName(), request.getDescription(), parent);
-        return categoryRepository.save(category);
+    public void deleteCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+        categoryRepository.delete(category);
     }
 
-    // New method to handle update from DTO
-    public Optional<Category> updateCategoryFromRequest(Long id, com.techegg.mart.dto.CategoryRequest request) {
-        return categoryRepository.findById(id).map(category -> {
-            category.setName(request.getName());
-            category.setDescription(request.getDescription());
-            if (request.getParentCategoryId() != null) {
-                Category parent = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
-                category.setParentCategory(parent);
-            } else {
-                category.setParentCategory(null);
-            }
-            return categoryRepository.save(category);
-        });
+    private CategoryResponse convertToResponse(Category category) {
+        return new CategoryResponse(
+                category.getId(),
+                category.getName(),
+                category.getDescription()
+        );
     }
 
-    @Transactional
-    public Optional<Category> updateCategory(Long id, Category updatedCategory) {
-        return categoryRepository.findById(id).map(category -> {
-            category.setName(updatedCategory.getName());
-            category.setDescription(updatedCategory.getDescription());
-            category.setParentCategory(updatedCategory.getParentCategory());
-            return categoryRepository.save(category);
-        });
-    }
-
-    @Transactional
-    public boolean deleteCategory(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            return false;
-        }
-        categoryRepository.deleteById(id);
-        return true;
+    private Category convertToEntity(CategoryRequest request) {
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        return category;
     }
 }

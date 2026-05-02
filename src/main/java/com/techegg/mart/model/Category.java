@@ -1,26 +1,46 @@
-package com.techegg.mart.dto;
+package com.techegg.mart.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class CategoryRequest {
+@Entity
+@Table(name = "categories")
+public class Category {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotBlank(message = "Category name is required")
     @Size(max = 100, message = "Category name must be less than 100 characters")
+    @Column(nullable = false)
     private String name;
 
     @Size(max = 500, message = "Category description must be less than 500 characters")
     private String description;
 
-    // Constructors
-    public CategoryRequest() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id")
+    private Category parentCategory;
 
-    public CategoryRequest(String name, String description) {
+    // Constructors
+    public Category() {}
+
+    public Category(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -35,5 +55,13 @@ public class CategoryRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Category getParentCategory() {
+        return parentCategory;
+    }
+
+    public void setParentCategory(Category parentCategory) {
+        this.parentCategory = parentCategory;
     }
 }

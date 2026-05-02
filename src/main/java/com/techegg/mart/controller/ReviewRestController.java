@@ -1,66 +1,50 @@
 package com.techegg.mart.controller;
 
-import com.techegg.mart.entity.Review;
-import com.techegg.mart.repository.ReviewRepository;
+import com.techegg.mart.dto.ReviewRequest;
+import com.techegg.mart.dto.ReviewResponse;
+import com.techegg.mart.service.ReviewService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/reviews")
 public class ReviewRestController {
 
-    private final ReviewRepository reviewRepository;
-
-    public ReviewRestController(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
-    }
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
+    public ResponseEntity<List<ReviewResponse>> getAllReviews() {
+        List<ReviewResponse> reviews = reviewService.getAllReviews();
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Review getReviewById(@PathVariable Long id) {
-        return reviewRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found"));
+    public ResponseEntity<ReviewResponse> getReviewById(@PathVariable Long id) {
+        ReviewResponse review = reviewService.getReviewById(id);
+        return new ResponseEntity<>(review, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Review> createReview(@Valid @RequestBody Review review) {
-        // Ensure createdAt is set if not provided
-        if (review.getCreatedAt() == null) {
-            // Review entity constructor already sets createdAt, but just in case
-        }
-        Review saved = reviewRepository.save(review);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    public ResponseEntity<ReviewResponse> createReview(@Valid @RequestBody ReviewRequest request) {
+        ReviewResponse createdReview = reviewService.createReview(request);
+        return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Review updateReview(@PathVariable Long id, @Valid @RequestBody Review reviewDetails) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found"));
-        // Update mutable fields
-        review.setProduct(reviewDetails.getProduct());
-        review.setUserId(reviewDetails.getUserId());
-        review.setRating(reviewDetails.getRating());
-        review.setComment(reviewDetails.getComment());
-        // createdAt typically not updated
-        return reviewRepository.save(review);
+    public ResponseEntity<ReviewResponse> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewRequest request) {
+        ReviewResponse updatedReview = reviewService.updateReview(id, request);
+        return new ResponseEntity<>(updatedReview, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
-        if (!reviewRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found");
-        }
-        reviewRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        reviewService.deleteReview(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
