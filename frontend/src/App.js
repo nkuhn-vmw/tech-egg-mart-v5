@@ -1,21 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Products from './pages/Products';
+import ProductDetail from './pages/ProductDetail';
 import Categories from './pages/Categories';
 import Reviews from './pages/Reviews';
+import Navigation from './components/Navigation';
 
 const App = () => (
   <Router>
-    <nav style={{ padding: '1rem', background: '#f0f0f0' }}>
-      <Link to="/" style={{ margin: '0 1rem' }}>Home</Link>
-      <Link to="/products" style={{ margin: '0 1rem' }}>Products</Link>
-      <Link to="/categories" style={{ margin: '0 1rem' }}>Categories</Link>
-      <Link to="/reviews" style={{ margin: '0 1rem' }}>Reviews</Link>
-    </nav>
+    <Navigation />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/products" element={<Products />} />
+      <Route path="/products/:id" element={<ProductDetail />} />
       <Route path="/categories" element={<Categories />} />
       <Route path="/reviews" element={<Reviews />} />
     </Routes>
