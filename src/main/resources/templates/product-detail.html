@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${product.name}">Product Detail</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            <img th:src="@{${product.imageUrl}}" class="img-fluid" alt="Product Image" />
+        </div>
+        <div class="col-md-7">
+            <h2 th:text="${product.name}">Product Name</h2>
+            <p class="text-muted" th:text="${product.brand}">Brand</p>
+            <h4 th:text="${#numbers.formatDecimal(product.price, 2, 'POINT', ',', 'USD')}">$0.00</h4>
+            <p th:text="${product.description}">Description</p>
+            <p><strong>Model:</strong> <span th:text="${product.model}"></span></p>
+            <p><strong>Specifications:</strong> <span th:text="${product.specifications}"></span></p>
+            <p><strong>Stock:</strong> <span th:text="${product.stockQuantity}"></span></p>
+            <p><strong>Rating:</strong> <span th:text="${product.rating}"></span> / 5</p>
+        </div>
+    </div>
+    <hr/>
+    <h3>Reviews</h3>
+    <div th:if="${reviews != null && !reviews.isEmpty()}">
+        <div class="list-group">
+            <div th:each="review : ${reviews}" class="list-group-item">
+                <h5 th:text="${review.userId}">User</h5>
+                <p><strong>Rating:</strong> <span th:text="${review.rating}"></span></p>
+                <p th:text="${review.comment}">Comment</p>
+                <small class="text-muted" th:text="${#dates.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+            </div>
+        </div>
+    </div>
+    <div th:if="${reviews == null || reviews.isEmpty()}">
+        <p>No reviews yet.</p>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
