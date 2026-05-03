@@ -30,6 +30,9 @@ public class Product {
     @Min(0)
     private Integer stockQuantity;
 
+    @NotBlank
+    private String imageUrl;
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -43,4 +46,7 @@ public class Product {
     public void setCategory(String category) { this.category = category; }
     public Integer getStockQuantity() { return stockQuantity; }
     public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
